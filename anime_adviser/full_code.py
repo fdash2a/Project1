@@ -1,6 +1,6 @@
 import random
 
-# Словарь с аниме по жанрам и типам, включая время просмотра в минутах
+"""Словарь с аниме по жанрам и типам, включая время просмотра в минутах"""
 anime_dict = {
     "classics": {
         "film": [
@@ -135,9 +135,10 @@ anime_dict = {
     },
 }
 
-used_titles = set()  # Множество для хранения уже выпавших ранее названий
+"""Множество для хранения уже выпавших ранее названий"""
+used_titles = set()
 
-
+"""Модуль, который выдает рандомное аниме из списка, когда пользователь выбирает категорию"""
 def _get_random_anime(genre, anime_type):
     global used_titles
     if genre in anime_dict and anime_type in anime_dict[genre]:
@@ -149,12 +150,12 @@ def _get_random_anime(genre, anime_type):
             return selected_anime
     return
 
-
+"""Модуль выводит последовательность из списка аниме"""
 def show_items(sequence):
     for idx, element in enumerate(sequence, 1):
         print(f"{idx}. {element}")
 
-# проверка, что ввели натуральное число
+"""Проверка, что ввели натуральное число, чтобы пользователь не ввел отрицательное число минут"""
 def integer_check(string_number, name):
     try:
         number = int(string_number)
@@ -165,19 +166,13 @@ def integer_check(string_number, name):
         return
     return number
 
-
+"""Модуль, который позволяет пользователю добавить свое аниме в список"""
 def add_anime():
     global anime_dict
     print("\nAvailable categories:")
-    show_items(anime_dict.keys())
-    category_index = input("Choose the category: ")
-    category_index = integer_check(category_index, "Category")
+    category_index = choose_item(anime_dict.keys(), "category")
     if category_index is None:
         return
-    if not (1 <= category_index <= len(anime_dict.keys())):
-        print(f"Category must be between 1 and {len(anime_dict.keys())}.")
-        return
-    category_index -= 1
     category = list(anime_dict.keys())[category_index]
     title = input("Type the anime's name: ")
     duration = input("Type the duration of one seria (in minutes): ")
@@ -188,68 +183,73 @@ def add_anime():
     episodes = integer_check(episodes, "Number of series")
     if episodes is None:
         return
-    # Проверка на дубликаты
+        
+"""Проверка на дубликаты"""
     for anime_type in anime_dict[category]:
         for anime in anime_dict[category][anime_type]:
             if anime["title"] == title:
                 print(f"The anime '{title}' already exists in category '{category}'.")
                 return
 
-    # Добавляем новую запись в соответствующую категорию
+"""Добавляем новую запись в соответствующую категорию"""
     anime_dict[category]["film" if episodes == 1 else "series"].append({"title": title,
                                                                         "duration": duration,
                                                                         "number": episodes})
     print(f"The anime '{title}' has been successfully added to category '{category}'!")
 
+"""Модуль, который закрепляет длительность и количество эпизодов аниме"""
+def anime_info(anime):
+    return (f"The duration of watching: {anime['duration']} minutes",
+            f"The number of series: {anime['number']}")
 
-def print_nested_list(anime_dict):
-    for i, sublist in enumerate(anime_dict):
-        print(f"{i + 1}:")
-        for item in sublist:
-            print(f"- {item}")
-            print()
+"""Для красоты :)"""
+def pretty_anime_string(anime):
+    return f"- {anime['title']}\n" + "\n".join([f"\tType: {anime['type']}"] +
+                                               [f"\t{info_item}" for info_item in anime_info(anime)])
 
+"""Модуль-хэлпер для получения рандомного аниме"""
+def choose_item(items, name):
+    show_items(items)
+    item_choice = input(f"Pick the number of {name}: ")
+    item_choice = integer_check(item_choice, name.capitalize())
+    if item_choice is None:
+        return
+    if not (1 <= item_choice <= len(items)):
+        print(f"{name.capitalize()} must be between 1 and {len(items)}.")
+        return
+    return  item_choice - 1
 
+"""Модуль для вывода списка аниме, актуального на данный момент"""
 def display_anime():
-    my_list = [
-        ["Элемент 1", "Элемент 2", "Элемент 3"],
-        ["Элемент 4", "Элемент 5"],
-        ["Элемент 6", "Элемент 7", "Элемент 8", "Элемент 9"]
-    ]
-    print_nested_list(my_list)
+    print("\nChoose a genre to show:")
+    genre_choice = choose_item(anime_dict.keys(), "genre")
+    if genre_choice is None:
+        return
+    selected_genre = list(anime_dict.keys())[genre_choice]
+    print(f"Genre: '{selected_genre}'")
+    for k in anime_dict[selected_genre]:
+        for anime in anime_dict[selected_genre][k]:
+            print(pretty_anime_string({"type": k} | anime))
 
-
+"""Модуль, который выдает пользователю рандомное аниме из выбранной категории"""
 def get_random_anime():
     while True:
         print("\nChoose what you want to experience:")
-        show_items(anime_dict.keys())
-        genre_choice = input("Pick the number of genre: ")
-        genre_choice = integer_check(genre_choice, "Genre")
+        genre_choice = choose_item(anime_dict.keys(), "genre")
         if genre_choice is None:
             return
-        if not (1 <= genre_choice <= len(anime_dict.keys())):
-            print(f"Genre must be between 1 and {len(anime_dict.keys())}.")
-            return
-        genre_choice -= 1
         selected_genre = list(anime_dict.keys())[genre_choice]
         print("\nDo you want to watch a film or a series?")
-        show_items(anime_dict[selected_genre].keys())
-        type_choice = input("Select the number of preferable type: ")
-        type_choice = integer_check(type_choice, "Type")
+        type_choice = choose_item(anime_dict[selected_genre].keys(), "type")
         if type_choice is None:
             return
-        if not (1 <= type_choice <= len(anime_dict[selected_genre].keys())):
-            print(f"Type must be between 1 and {len(anime_dict[selected_genre].keys())}.")
-            return
-        type_choice -= 1
         selected_type = list(anime_dict[selected_genre].keys())[type_choice]
 
         random_anime = _get_random_anime(selected_genre, selected_type)
 
         if random_anime:
             print(
-                f"\nHere you go: {random_anime['title']}\nThe duration of watching: {random_anime['duration']}"
-                f" minutes\nThe number of series: {random_anime['number']}")
+                f"\nHere you go: {random_anime['title']}\n" + "\n".join(anime_info(random_anime)))
         else:
             print("You've already seen all the animes from this list.")
 
@@ -257,17 +257,8 @@ def get_random_anime():
         if another != 'yes':
             return
 
-
+"""Ура-ура, мы почти закончили. Задаем варианты действий пользователя и приводим для каждый соответствующую функцию"""
 def main():
-    # anime_dict = {
-    #     "classics": [],
-    #     "sport": [],
-    #     "sad": [],
-    #     "spooky": [],
-    #     "visuals": [],
-    #     "romance": []
-    # }
-
     while True:
         print("\nこんにちは! What do you want to do?")
         print("1. Add your anime to the list")
@@ -288,7 +279,6 @@ def main():
             break
         else:
             print("Sorry, I don't follow you. Please try again.")
-
 
 if __name__ == "__main__":
     main()
