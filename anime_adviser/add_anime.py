@@ -32,3 +32,13 @@ def add_anime():
                                                                         "duration": duration,
                                                                         "number": episodes})
     print(f"The anime '{title}' has been successfully added to category '{category}'!")
+
+def integer_check(string_number, name):
+    try:
+        number = int(string_number)
+        if number <= 0:
+            raise ValueError
+    except ValueError:
+        print(f"{name} must be positive integer number.")
+        return
+    return number
