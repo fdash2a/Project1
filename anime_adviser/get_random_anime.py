@@ -1,3 +1,14 @@
+def choose_item(items, name):
+    show_items(items)
+    item_choice = input(f"Pick the number of {name}: ")
+    item_choice = integer_check(item_choice, name.capitalize())
+    if item_choice is None:
+        return
+    if not (1 <= item_choice <= len(items)):
+        print(f"{name.capitalize()} must be between 1 and {len(items)}.")
+        return
+    return  item_choice - 1
+
 def get_random_anime():
     global used_titles
     while True:
