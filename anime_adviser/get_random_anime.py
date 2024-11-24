@@ -1,3 +1,7 @@
+def show_items(sequence):
+    for idx, element in enumerate(sequence, 1):
+        print(f"{idx}. {element}")
+
 def choose_item(items, name):
     show_items(items)
     item_choice = input(f"Pick the number of {name}: ")
