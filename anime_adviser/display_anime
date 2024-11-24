@@ -1,0 +1,10 @@
+def display_anime():
+    print("\nChoose a genre to show:")
+    genre_choice = choose_item(anime_dict.keys(), "genre")
+    if genre_choice is None:
+        return
+    selected_genre = list(anime_dict.keys())[genre_choice]
+    print(f"Genre: '{selected_genre}'")
+    for k in anime_dict[selected_genre]:
+        for anime in anime_dict[selected_genre][k]:
+            print(pretty_anime_string({"type": k} | anime))
