@@ -1,13 +1,4 @@
 def main():
-    # anime_dict = {
-    #     "classics": [],
-    #     "sport": [],
-    #     "sad": [],
-    #     "spooky": [],
-    #     "visuals": [],
-    #     "romance": []
-    # }
-
     while True:
         print("\nこんにちは! What do you want to do?")
         print("1. Add your anime to the list")
