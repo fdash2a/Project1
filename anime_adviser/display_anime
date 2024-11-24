@@ -1,3 +1,12 @@
+def anime_info(anime):
+    return (f"The duration of watching: {anime['duration']} minutes",
+            f"The number of series: {anime['number']}")
+
+"""Для красоты :)"""
+def pretty_anime_string(anime):
+    return f"- {anime['title']}\n" + "\n".join([f"\tType: {anime['type']}"] +
+                                               [f"\t{info_item}" for info_item in anime_info(anime)])
+
 def display_anime():
     print("\nChoose a genre to show:")
     genre_choice = choose_item(anime_dict.keys(), "genre")
