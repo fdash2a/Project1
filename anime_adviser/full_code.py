@@ -138,18 +138,6 @@ anime_dict = {
 """Множество для хранения уже выпавших ранее названий"""
 used_titles = set()
 
-"""Модуль, который выдает рандомное аниме из списка, когда пользователь выбирает категорию"""
-def _get_random_anime(genre, anime_type):
-    global used_titles
-    if genre in anime_dict and anime_type in anime_dict[genre]:
-        anime_list = anime_dict[genre][anime_type]
-        available_anime = [anime for anime in anime_list if anime["title"] not in used_titles]
-        if available_anime:
-            selected_anime = random.choice(available_anime)
-            used_titles.add(selected_anime["title"])
-            return selected_anime
-    return
-
 """Модуль выводит последовательность из списка аниме"""
 def show_items(sequence):
     for idx, element in enumerate(sequence, 1):
@@ -233,6 +221,7 @@ def display_anime():
 
 """Модуль, который выдает пользователю рандомное аниме из выбранной категории"""
 def get_random_anime():
+    global used_titles
     while True:
         print("\nChoose what you want to experience:")
         genre_choice = choose_item(anime_dict.keys(), "genre")
@@ -245,9 +234,15 @@ def get_random_anime():
             return
         selected_type = list(anime_dict[selected_genre].keys())[type_choice]
 
-        random_anime = _get_random_anime(selected_genre, selected_type)
-
-        if random_anime:
+        random_anime = None
+        if selected_genre in anime_dict and selected_type in anime_dict[selected_genre]:
+            anime_list = anime_dict[selected_genre][selected_type]
+            available_anime = [anime for anime in anime_list if anime["title"] not in used_titles]
+            if available_anime:
+                selected_anime = random.choice(available_anime)
+                used_titles.add(selected_anime["title"])
+                random_anime = selected_anime
+        if random_anime is not None:
             print(
                 f"\nHere you go: {random_anime['title']}\n" + "\n".join(anime_info(random_anime)))
         else:
